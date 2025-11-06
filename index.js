@@ -3,26 +3,34 @@ const currencySelect = document.querySelector(".currency-select")//selecionar as
 const fromCurrencySelect = document.querySelector(".from-currency-select")
 
 
-const rates = {//taxa de conversão
-    real: 1,
-    dolar: 5.3,
-    euro: 6.2,
-    libra: 7.2,
-    bitcoin: 653350
-}
-function convertValues() {
+ const convertValues = async() =>{
     const inputCurrencyValue = document.querySelector(".input-currency").value//valor do input que sera convertido
     const currencyValueToConvert = document.querySelector(".currency-value-to-convert")//valor da moeda para converter
     const currencyValueConverted = document.querySelector(".currency-value")//valor da moeda convertida
+    
+    
+     const data = await fetch("https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,GBP-BRL,BTC-BRL")
+    .then(response => response.json())
+
+    console.log(data)
+
+    // 🔹 cria um mapa de taxas com base na resposta da API
+  const ratesAPI = {
+    real: 1,
+    dolar: parseFloat(data.USDBRL.high),
+    euro: parseFloat(data.EURBRL.high),
+    libra: parseFloat(data.GBPBRL.high),
+    bitcoin: parseFloat(data.BTCBRL.high)
+  };
 
     const from = fromCurrencySelect.value//moeda de origem
     const to = currencySelect.value//moeda de destino
 
     // converte o valor da moeda de origem para real
-    const valueInBRL = inputCurrencyValue * rates[from]
+    const valueInBRL = inputCurrencyValue * ratesAPI[from]
 
     // converte de real para a moeda de destino
-    const convertedValue = valueInBRL / rates[to]
+    const convertedValue = valueInBRL / ratesAPI[to]
 
     // formata o valor convertido
     const formatMap = {// mapa de formatação
